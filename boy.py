@@ -19,20 +19,37 @@ async def on_message(message):
     if message.content.upper().startswith("?PICPLS"):
         pic = message.content.split(" ")
 
+        command = "?picpls"
+        gif = "gif"
+        png = "png"
+        jpg = "jpg"
+
+        format = ""
+
         kwrd = ""
-        first = True
-    
+
         for i in pic:
-            if (first):
-                first = False
+            if (i == command.lower()):
                 continue
-            
+
+            if (i == gif.lower()):
+                format = gif
+                continue
+            elif (i == png.lower()):
+                format = png
+                continue
+            elif (i == jpg.lower()):
+                format = jpg
+                continue
+            else:
+                format = jpg
+
             kwrd = kwrd + str(i) + " "
 
         kwrd = kwrd.rstrip()
-    
+
         print("%s" % kwrd)
-        
+
         rpic = random.randint(0, 100)
 
         if (not rpic):
@@ -41,7 +58,7 @@ async def on_message(message):
             print("Passed random link init with: %s\n" % rpic)
 
         response = google_images_download.googleimagesdownload()
-        pth = response.download({"keywords":"%s" % kwrd, "limit":rpic, "offset":rpic, "no_directory":1, "extract_metadata":1, "no_download":1})
+        pth = response.download({"keywords":"%s" % kwrd, "limit":rpic, "offset":rpic, "no_directory":1, "extract_metadata":1, "no_download":1, "format":"%s" % format})
 
         if (not response):
             print("ERROR: Failed response\n")
@@ -62,11 +79,11 @@ async def on_message(message):
 
         print("Uploading...")
 
-        url = urllib.request.urlretrieve(imgPath, "downloads/%s.jpg" % kwrd)
+        url = urllib.request.urlretrieve(imgPath, "downloads/%s.%s" % (kwrd, format))
 
-        await bot.send_file(message.channel, "downloads/%s.jpg" % kwrd)
+        await bot.send_file(message.channel, "downloads/%s.%s" % (kwrd, format))
 
-        os.remove("downloads/%s.jpg" % kwrd)
+        os.remove("downloads/%s.%s" % (kwrd, format))
         os.remove("logs/%s.json" % kwrd)
         urllib.request.urlcleanup()
 
