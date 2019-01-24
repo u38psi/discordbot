@@ -24,7 +24,7 @@ async def on_message(message):
         png = "png"
         jpg = "jpg"
 
-        format = ""
+        format = "jpg"
 
         kwrd = ""
 
@@ -41,8 +41,6 @@ async def on_message(message):
             elif (i == jpg.lower()):
                 format = jpg
                 continue
-            else:
-                format = jpg
 
             kwrd = kwrd + str(i) + " "
 
