@@ -62,11 +62,11 @@ async def on_message(message):
 
         print("Uploading...")
 
-        url = urllib.request.urlretrieve(imgPath, "C:/%s.jpg" % kwrd)
+        url = urllib.request.urlretrieve(imgPath, "downloads/%s.jpg" % kwrd)
 
-        await bot.send_file(message.channel, "C:/%s.jpg" % kwrd)
+        await bot.send_file(message.channel, "downloads/%s.jpg" % kwrd)
 
-        os.remove("C:/%s.jpg" % kwrd)
+        os.remove("downloads/%s.jpg" % kwrd)
         os.remove("logs/%s.json" % kwrd)
         urllib.request.urlcleanup()
 
