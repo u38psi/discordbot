@@ -13,9 +13,14 @@ from google_images_download import google_images_download
 
 Client = discord.Client()
 bot = commands.Bot(command_prefix = "?")
+userAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7"
+header = {"User-Agent": userAgent}
 
 @bot.event
 async def on_message(message):
+    if message.content == "==exitNow==":
+        quit()
+
     if message.content.upper().startswith("?PICPLS"):
         pic = message.content.split(" ")
 
@@ -77,7 +82,14 @@ async def on_message(message):
 
         print("Uploading...")
 
-        url = urllib.request.urlretrieve(imgPath, "downloads/%s.%s" % (kwrd, format))
+        request = urllib.request.Request(imgPath, None, header)
+        response = urllib.request.urlopen(request)
+
+        print(response.info())
+
+        ret = urllib.request.urlretrieve(response.geturl(), "downloads/%s.%s" % (kwrd, format))
+
+        print(ret)
 
         await bot.send_file(message.channel, "downloads/%s.%s" % (kwrd, format))
 
