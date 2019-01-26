@@ -111,4 +111,4 @@ async def on_message(message):
 
         time.sleep(0.2)
 
-bot.run("NTM3MjQwMzkxNjM2ODc3MzEz.Dy5kKw.iwEovPN67e-WUlxUjOpvGZfZ0Tw")#insert your botoken
+bot.run("")#insert your botoken
