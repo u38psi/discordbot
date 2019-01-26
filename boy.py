@@ -3,6 +3,7 @@ import random
 import os
 import urllib
 import urllib.request
+from urllib.request import FancyURLopener
 import sys
 from discord.ext.commands import Bot
 from discord.ext import commands
@@ -13,8 +14,6 @@ from google_images_download import google_images_download
 
 Client = discord.Client()
 bot = commands.Bot(command_prefix = "?")
-userAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7"
-header = {"User-Agent": userAgent}
 
 @bot.event
 async def on_message(message):
@@ -82,12 +81,17 @@ async def on_message(message):
 
         print("Uploading...")
 
-        request = urllib.request.Request(imgPath, None, header)
-        response = urllib.request.urlopen(request)
+        userAgents = [
+        'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
+        'Opera/9.25 (Windows NT 5.1; U; en)',
+        'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',
+        'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
+        'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',
+        'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9'
+        ]
 
-        print(response.info())
 
-        ret = urllib.request.urlretrieve(response.geturl(), "downloads/%s.%s" % (kwrd, format))
+        ret = urllib.request.urlretrieve(imgPath, "downloads/%s.%s" % (kwrd, format))
 
         print(ret)
 
@@ -101,4 +105,4 @@ async def on_message(message):
 
         time.sleep(0.2)
 
-bot.run()#insert your botoken
+bot.run("NTM3MjQwMzkxNjM2ODc3MzEz.Dy4qjg.zhP2sZsyN9jF_R_ZTqLg9PaI9Lc")#insert your botoken
