@@ -13,27 +13,32 @@ import time
 from google_images_download import google_images_download
 
 Client = discord.Client()
-bot = commands.Bot(command_prefix = "?")
+bot = commands.Bot(command_prefix = "%")
 
 @bot.event
 async def on_message(message):
-    if message.content == "==exitNow==":
+    if message.content == "exitB":
         quit()
 
-    if message.content.upper().startswith("?PICPLS"):
+    if message.content.upper().startswith("%B"):
         pic = message.content.split(" ")
 
-        command = "?picpls"
+        command = "%B"
         gif = "gif"
         png = "png"
         jpg = "jpg"
 
         format = "jpg"
 
-        kwrd = ""
+        kwrd = []
+        imgPath = []
+        first = True
+
+        kcount = 0
 
         for i in pic:
-            if (i == command.lower()):
+
+            if (i == command.upper()):
                 continue
 
             if (i == gif.lower()):
@@ -46,11 +51,17 @@ async def on_message(message):
                 format = jpg
                 continue
 
-            kwrd = kwrd + str(i) + " "
+            if (first):
+                kwrd.insert(kcount, str(i))
+                first = False
+            elif (i == "|"):
+                kcount += 1
+                first = True
+            else:
+                kwrd.insert(kcount, kwrd[kcount] + " " + str(i))
 
-        kwrd = kwrd.rstrip()
-
-        print("%s" % kwrd)
+        for i in range(0, kcount+1):
+            print(kwrd[i])
 
         rpic = random.randint(0, 100)
 
@@ -60,7 +71,8 @@ async def on_message(message):
             print("Passed random link init with: %s\n" % rpic)
 
         response = google_images_download.googleimagesdownload()
-        pth = response.download({"keywords":"%s" % kwrd, "limit":rpic, "offset":rpic, "no_directory":1, "extract_metadata":1, "no_download":1, "format":"%s" % format})
+        for i in range(0, kcount+1):
+            pth = response.download({"keywords":"%s" % kwrd[i], "limit":rpic, "offset":rpic, "no_directory":1, "extract_metadata":1, "no_download":1, "format":"%s" % format})
 
         if (not response):
             print("ERROR: Failed response\n")
@@ -69,10 +81,12 @@ async def on_message(message):
         else:
             print("Passed link gather\n")
 
-        with open("logs/%s.json" % kwrd) as f:
-            imgData = json.load(f)
-            for img in imgData:
-                imgPath = str(img['image_link'])
+        for i in range(0, kcount+1):
+            with open("logs/%s.json" % kwrd[i]) as f:
+                imgData = ""
+                imgData = json.load(f)
+                for img in imgData:
+                    imgPath.insert(i, str(img['image_link']))
 
         if (not imgPath):
             print("ERROR: Failed opening link\n")
@@ -81,29 +95,20 @@ async def on_message(message):
 
         print("Uploading...")
 
-        userAgents = [
-        'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11',
-        'Opera/9.25 (Windows NT 5.1; U; en)',
-        'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',
-        'Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)',
-        'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',
-        'Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9'
-        ]
+        opener = urllib.request.URLopener()
+        opener.addheader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36")
 
+        for i in range(0, kcount+1):
+            ret = opener.retrieve(imgPath[i], "downloads/%s.%s" % (kwrd[i], format))
+            print(ret)
+            await bot.send_file(message.channel, "downloads/%s.%s" % (kwrd[i], format))
+            os.remove("downloads/%s.%s" % (kwrd[i], format))
+            os.remove("logs/%s.json" % kwrd[i])
 
-
-        ret = urllib.request.urlretrieve(imgPath, "downloads/%s.%s" % (kwrd, format))
-
-        print(ret)
-
-        await bot.send_file(message.channel, "downloads/%s.%s" % (kwrd, format))
-
-        os.remove("downloads/%s.%s" % (kwrd, format))
-        os.remove("logs/%s.json" % kwrd)
         urllib.request.urlcleanup()
 
         print("FINISHED! \n")
 
         time.sleep(0.2)
 
-bot.run()#insert your botoken
+bot.run("NTM3MjQwMzkxNjM2ODc3MzEz.Dy5kKw.iwEovPN67e-WUlxUjOpvGZfZ0Tw")#insert your botoken
