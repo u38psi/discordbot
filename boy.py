@@ -23,7 +23,7 @@ async def on_message(message):
     if message.content.upper().startswith("%B"):
         pic = message.content.split(" ")
 
-        command = "%B"
+        command = "%b"
         gif = "gif"
         png = "png"
         jpg = "jpg"
@@ -38,7 +38,7 @@ async def on_message(message):
 
         for i in pic:
 
-            if (i == command.upper()):
+            if (i.lower() == command.lower()):
                 continue
 
             if (i == gif.lower()):
@@ -111,4 +111,4 @@ async def on_message(message):
 
         time.sleep(0.2)
 
-bot.run("")#insert your botoken
+bot.run()#insert your botoken
